@@ -2,7 +2,6 @@ name: Supabase keep-alive (commandes)
 
 on:
   schedule:
-    # Tous les 3 jours
     - cron: "23 3 */3 * *"
   workflow_dispatch:
 
@@ -15,26 +14,22 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_COMMANDES_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_COMMANDES_ANON_KEY }}
         run: |
-  set -euo pipefail
+          set -euo pipefail
 
-  # Vérifie que les variables existent (sans afficher la clé)
-  echo "SUPABASE_URL length: ${#SUPABASE_URL}"
-  echo "SUPABASE_ANON_KEY length: ${#SUPABASE_ANON_KEY}"
+          echo "SUPABASE_URL length: ${#SUPABASE_URL}"
+          echo "SUPABASE_ANON_KEY length: ${#SUPABASE_ANON_KEY}"
 
-  # Nettoyage (au cas où il y a un \r ou un espace final)
-  SUPABASE_URL="$(echo -n "$SUPABASE_URL" | tr -d '\r' | xargs)"
-  SUPABASE_ANON_KEY="$(echo -n "$SUPABASE_ANON_KEY" | tr -d '\r' | xargs)"
+          SUPABASE_URL="$(echo -n "$SUPABASE_URL" | tr -d '\r' | xargs)"
+          SUPABASE_ANON_KEY="$(echo -n "$SUPABASE_ANON_KEY" | tr -d '\r' | xargs)"
 
-  # Jitter
-  JITTER=$((RANDOM % 1200))
-  echo "Sleeping ${JITTER}s"
-  sleep $JITTER
+          JITTER=$((RANDOM % 1200))
+          echo "Sleeping ${JITTER}s"
+          sleep $JITTER
 
-  # Debug URL (sans fuite de clé)
-  echo "Calling: ${SUPABASE_URL}/rest/v1/healthcheck?select=id&limit=1"
+          echo "Calling: ${SUPABASE_URL}/rest/v1/healthcheck?select=id&limit=1"
 
-  curl -v -sS \
-    "${SUPABASE_URL}/rest/v1/healthcheck?select=id&limit=1" \
-    -H "apikey: ${SUPABASE_ANON_KEY}" \
-    -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
-    -H "Accept: application/json"
+          curl -sS \
+            "${SUPABASE_URL}/rest/v1/healthcheck?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Accept: application/json"
