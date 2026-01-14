@@ -15,22 +15,9 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_COMMANDES_ANON_KEY }}
         run: |
           set -euo pipefail
-
-          echo "SUPABASE_URL length: ${#SUPABASE_URL}"
-          echo "SUPABASE_ANON_KEY length: ${#SUPABASE_ANON_KEY}"
-
-          SUPABASE_URL="$(echo -n "$SUPABASE_URL" | tr -d '\r' | xargs)"
-          SUPABASE_ANON_KEY="$(echo -n "$SUPABASE_ANON_KEY" | tr -d '\r' | xargs)"
-
-          JITTER=$((RANDOM % 1200))
-          echo "Sleeping ${JITTER}s"
-          sleep $JITTER
-
           echo "Calling: ${SUPABASE_URL}/rest/v1/healthcheck?select=id&limit=1"
-
           curl -sS \
             "${SUPABASE_URL}/rest/v1/healthcheck?select=id&limit=1" \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
             -H "Accept: application/json"
-
